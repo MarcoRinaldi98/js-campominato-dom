@@ -1,0 +1,91 @@
+/* Style */
+/* CSS reset */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* VARIABILI */
+:root {
+    --ms-primary-color: #7fffd4;
+    --ms-secondary-color: #45adeb;
+    --ms-text-white: #fff;
+    --ms-text-black: #000;
+}
+
+/* Regole di DEBUG */
+
+
+/* Regole CSS generali */
+html{
+    font-family: sans-serif;
+}
+/* HEADER */
+header {
+    height: 70px;
+    background-color: var(--ms-text-white);
+}
+/* MAIN */
+main {
+    height: calc(100vh - 70px - 70px);
+    background-color: var(--ms-primary-color);
+    padding-top: 50px;
+}
+#grid {
+    width: 400px;
+    height: 400px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+.ms_square {
+    border: 2px solid var(--ms-text-black);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ms_square.ms_clicked {
+    background-color: var(--ms-secondary-color);
+}
+
+
+
+
+/* FOOTER */
+footer {
+    height: 70px;
+    background-color: var(--ms-text-white);
+}
+
+
+
+/* MEDIA QUERY */
+/* Breakpoint sm */
+@media screen and (min-width: 576px) {
+    
+}
+
+/* Breakpoint md */
+@media screen and (min-width: 768px) {
+    #grid {
+        width: 600px;
+        height: 600px;
+    }
+}
+
+/* Breakpoint lg */
+@media screen and (min-width: 992px) {
+    
+}
+
+/* Breakpoint xl */
+@media screen and (min-width: 1200px) {
+    
+}
+
+/* Breakpoint xxl */
+@media screen and (min-width: 1400px) {
+    
+}
