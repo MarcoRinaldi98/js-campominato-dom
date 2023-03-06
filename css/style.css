@@ -10,6 +10,7 @@
 :root {
     --ms-primary-color: #7fffd4;
     --ms-secondary-color: #45adeb;
+    --ms-bomb-color: #ed4337;
     --ms-text-white: #fff;
     --ms-text-black: #000;
 }
@@ -46,8 +47,11 @@ main {
     align-items: center;
 }
 
-.ms_square.ms_clicked {
+.ms_square.ms_valid {
     background-color: var(--ms-secondary-color);
+}
+.ms_square.ms_bomb {
+    background-color: var(--ms-bomb-color);
 }
 
 

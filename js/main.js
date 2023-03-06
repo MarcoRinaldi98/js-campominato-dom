@@ -61,8 +61,15 @@ function generatePlayground(cellsNumber, cellPerSide) {
         const currentCell = generateGridItem(cellPerSide, i);
         //evento per cambiare lo sfondo al quadrato quando lo clicco
         currentCell.addEventListener('click', function() {
-            this.classList.toggle('ms_clicked');
+
+            if (isNumberBomb(i) == 'valid') {
+                this.classList.toggle('ms_valid');
+            } else {
+                this.classList.toggle('ms_bomb');
+            }
             console.log('hai cliccato sul numero', i);
+            console.log(bombs);
+            console.log(isNumberBomb(i));
         });
         //inserisco il quadratino creato nella griglia
         gridDom.append(currentCell);
@@ -116,4 +123,13 @@ function generateUniqueRandomNumber(blacklist, min, max) {
         }
     }
     return randomNumber;
+}
+
+//funzione per capire se il numero cliccato è una bomba o no
+function isNumberBomb(i) {
+    if (i == bombs[0] || i == bombs[1] || i == bombs[2] || i == bombs[3] || i == bombs[4] || i == bombs[5] || i == bombs[6] || i == bombs[7] || i == bombs[8] || i == bombs[9] || i == bombs[10] || i == bombs[11] || i == bombs[12] || i == bombs[13] || i == bombs[14] || i == bombs[15]) {
+        return 'bomb';
+    } else {
+        return 'valid';
+    }
 }
