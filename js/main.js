@@ -7,6 +7,8 @@ const playDom = document.getElementById('generator');
 //identifico la scelta dell'utente
 const levelDom = document.getElementById('difficulty');
 
+let bombs = [];
+
 //evento per generare la griglia in base alla difficoltà al click del pulsante play
 playDom.addEventListener('click', function() {
 
@@ -19,6 +21,7 @@ playDom.addEventListener('click', function() {
 function createNewGame(level) {
     let cells;
     let cellPerSide;
+    
 
     switch(level) {
         //Se l'utente ha selezionato la difficoltà 1  la griglia dovrà contenere 100 square 
@@ -36,6 +39,9 @@ function createNewGame(level) {
     }
     //calcolo la radice quadrata del numero totale delle celle per sapere quante celle sul lato x e quante sul lato y
     cellPerSide = Math.sqrt(cells);
+    
+    bombs = generateBombs(cells);
+    console.log(bombs);
 
     generatePlayground(cells, cellPerSide);
 }
@@ -72,4 +78,42 @@ function generateGridItem(cellPerSide, number) {
     cell.innerHTML = `<div class="cell-number">${number}</div>`;
 
     return cell;
+}
+
+//funzione per generare 16 numeri unici
+function generateBombs(cells) {
+    let numberBlacklist = [];
+    //ciclo per far uscire 16 numeri
+    for (let i = 0; i < 16; i++) {
+        //genero ad ogni giro del ciclo un numero a caso unico
+        const newValidRandomNumber = generateUniqueRandomNumber(numberBlacklist, 1, cells);
+        
+        //aggiungo il numero generato nella lista dei numeri già generati
+        numberBlacklist.push(newValidRandomNumber);
+    }
+
+    return numberBlacklist;
+}
+
+
+//funzione per generare un numero casuale tra min e max
+function generateRandomNumber(min, max) {
+    const number = Math.floor(Math.random() * (max - min + 1)) + min;
+    return number;
+}
+
+//funzione per generare un numero casuale tra min e max che non sia già uscito
+function generateUniqueRandomNumber(blacklist, min, max) {
+    //imposto una variabile booleana a false
+    let isValidNumber = false;
+    let randomNumber;
+    //ciclo di verifica
+    while (!isValidNumber) {
+        randomNumber = generateRandomNumber(min, max);
+        //SE blacklist non include il randomNumber
+        if (!blacklist.includes(randomNumber)) {
+            isValidNumber = true;
+        }
+    }
+    return randomNumber;
 }
