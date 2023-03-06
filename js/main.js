@@ -6,8 +6,14 @@
 const playDom = document.getElementById('generator');
 //identifico la scelta dell'utente
 const levelDom = document.getElementById('difficulty');
+//identifico l'elemento che mi da il punteggio
+const score = document.getElementById('score');
+let scoreNumber = 0;
 //definisco l'array che conterrà i numeri corrispondenti alle bombe
 let bombs = [];
+//variabili per la funzione createNewGame()
+let cells;
+let cellPerSide;
 
 //evento per generare la griglia in base alla difficoltà al click del pulsante play
 playDom.addEventListener('click', function() {
@@ -21,9 +27,6 @@ playDom.addEventListener('click', function() {
 
 //funzione per generare una nuova partita
 function createNewGame(level) {
-    let cells;
-    let cellPerSide;
-    
     //controllo della scelta dell'utente
     switch(level) {
         //Se l'utente ha selezionato la difficoltà 1  la griglia dovrà contenere 100 square 
@@ -46,6 +49,7 @@ function createNewGame(level) {
     console.log(bombs);
     //genero la griglia di gioco
     generatePlayground(cells, cellPerSide);
+
 }
 
 //funzione per generare la griglia contenente i quadrati
@@ -66,9 +70,17 @@ function generatePlayground(cellsNumber, cellPerSide) {
             //SE non è una bomba do sfondo azzurro
             if (isNumberBomb(i) == 'valid') {
                 this.classList.toggle('ms_valid');
+                scoreNumber++;
+                if (scoreNumber == (cells - 16)) {
+                    score .innerHTML = `Complimenti, HAI VINTO, con un punteggio di: ${scoreNumber}`;
+                } else {
+                    score .innerHTML = `Il tuo punteggio è di: ${scoreNumber}`;
+                }
+                
             //SE è una bomba do sfondo rosso
             } else {
                 this.classList.toggle('ms_bomb');
+                score .innerHTML = `Mi dispiace, HAI PERSO, con un punteggio di: ${scoreNumber}`;
             }
             console.log(bombs);
             console.log('hai cliccato sul numero', i);
