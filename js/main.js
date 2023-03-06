@@ -6,13 +6,15 @@
 const playDom = document.getElementById('generator');
 //identifico la scelta dell'utente
 const levelDom = document.getElementById('difficulty');
-
+//definisco l'array che conterrà i numeri corrispondenti alle bombe
 let bombs = [];
 
 //evento per generare la griglia in base alla difficoltà al click del pulsante play
 playDom.addEventListener('click', function() {
 
+    //identifico la scelta dell'utente
     const level = levelDom.value;
+    //creo la griglia di gioco in base alla difficoltà selezionata
     createNewGame(level);
 
 });
@@ -22,7 +24,7 @@ function createNewGame(level) {
     let cells;
     let cellPerSide;
     
-
+    //controllo della scelta dell'utente
     switch(level) {
         //Se l'utente ha selezionato la difficoltà 1  la griglia dovrà contenere 100 square 
         case "1":
@@ -39,10 +41,10 @@ function createNewGame(level) {
     }
     //calcolo la radice quadrata del numero totale delle celle per sapere quante celle sul lato x e quante sul lato y
     cellPerSide = Math.sqrt(cells);
-    
+    //inserisco i numeri corrispondenti alle bombe nell'array
     bombs = generateBombs(cells);
     console.log(bombs);
-
+    //genero la griglia di gioco
     generatePlayground(cells, cellPerSide);
 }
 
@@ -61,14 +63,15 @@ function generatePlayground(cellsNumber, cellPerSide) {
         const currentCell = generateGridItem(cellPerSide, i);
         //evento per cambiare lo sfondo al quadrato quando lo clicco
         currentCell.addEventListener('click', function() {
-
+            //SE non è una bomba do sfondo azzurro
             if (isNumberBomb(i) == 'valid') {
                 this.classList.toggle('ms_valid');
+            //SE è una bomba do sfondo rosso
             } else {
                 this.classList.toggle('ms_bomb');
             }
-            console.log('hai cliccato sul numero', i);
             console.log(bombs);
+            console.log('hai cliccato sul numero', i);
             console.log(isNumberBomb(i));
         });
         //inserisco il quadratino creato nella griglia
