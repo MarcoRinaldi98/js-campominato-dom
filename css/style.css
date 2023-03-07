@@ -47,10 +47,10 @@ main {
     align-items: center;
 }
 
-.ms_square.ms_valid {
+.ms_square.clicked {
     background-color: var(--ms-secondary-color);
 }
-.ms_square.ms_bomb {
+.ms_square.clicked-bomb {
     background-color: var(--ms-bomb-color);
 }
 

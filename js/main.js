@@ -2,94 +2,139 @@
     JAVASCRIPT
 */
 
-//identifico il pulsante per generare la griglia
+//variabili globali
 const playDom = document.getElementById('generator');
-//identifico la scelta dell'utente
 const levelDom = document.getElementById('difficulty');
-//identifico l'elemento che mi da il punteggio
-const score = document.getElementById('score');
-let scoreNumber = 0;
-//definisco l'array che conterrà i numeri corrispondenti alle bombe
-let bombs = [];
-//variabili per la funzione createNewGame()
-let cells;
-let cellPerSide;
+const myScoreDom = document.getElementById('score');
+
 
 //evento per generare la griglia in base alla difficoltà al click del pulsante play
 playDom.addEventListener('click', function() {
 
-    //identifico la scelta dell'utente
     const level = levelDom.value;
-    //creo la griglia di gioco in base alla difficoltà selezionata
     createNewGame(level);
 
 });
 
 //funzione per generare una nuova partita
 function createNewGame(level) {
-    //controllo della scelta dell'utente
+    myScoreDom.innerHTML = "Il tuo punteggio è: 0";
+
+    let cells;
+    let cellPerSide;
+    //variabile in caso di fine partita
+    let gameOver = false;
+
+    const freeCells = [];
+
     switch(level) {
-        //Se l'utente ha selezionato la difficoltà 1  la griglia dovrà contenere 100 square 
         case "1":
             cells = 100;
             break;
-        //Se l'utente ha selezionato la difficoltà 2  la griglia dovrà contenere 81 square 
         case "2":
             cells = 81;
             break;
-        //Se l'utente ha selezionato la difficoltà 3  la griglia dovrà contenere 49 square 
         case "3":
             cells = 49;
             break;
-    }
-    //calcolo la radice quadrata del numero totale delle celle per sapere quante celle sul lato x e quante sul lato y
+    } 
     cellPerSide = Math.sqrt(cells);
-    //inserisco i numeri corrispondenti alle bombe nell'array
-    bombs = generateBombs(cells);
+    //array delle 16 bombe causali uniche
+    const bombs = generateBombList(16, cells);
     console.log(bombs);
-    //genero la griglia di gioco
-    generatePlayground(cells, cellPerSide);
 
-}
-
-//funzione per generare la griglia contenente i quadrati
-function generatePlayground(cellsNumber, cellPerSide) {
+    //creo e resetto il terreno gi gioco
     const gridDom = document.getElementById('grid');
-    //resetto l'innerHTML di grid
     gridDom.innerHTML = '';
-    const info = document.getElementById('info');
     //nascondo la scritta di info per l'utente
+    const info = document.getElementById('info');
     info.classList.add('d-none');
 
-    //ciclo di creazione del numero di quadrati necessari in base alla difficoltà
-    for (let i = 1; i <= cellsNumber; i++) {
-        //definisco il quadrato corrente 
+    for (let i = 1; i <= cells; i++) {
         const currentCell = generateGridItem(cellPerSide, i);
-        //evento per cambiare lo sfondo al quadrato quando lo clicco
         currentCell.addEventListener('click', function() {
-            //SE non è una bomba do sfondo azzurro
-            if (isNumberBomb(i) == 'valid') {
-                this.classList.toggle('ms_valid');
-                scoreNumber++;
-                if (scoreNumber == (cells - 16)) {
-                    score .innerHTML = `Complimenti, HAI VINTO, con un punteggio di: ${scoreNumber}`;
+            if (!gameOver) {
+                //SE clicco su una bomba
+                if (bombs.includes(i)) {
+                    this.classList.add('clicked-bomb');
+                    gameOver = true;
+                    discoverBombs(bombs);
+                    myScoreDom.innerHTML = "Mi dispiace, HAI PERSO, il tuo punteggio è di: " + freeCells.length;
                 } else {
-                    score .innerHTML = `Il tuo punteggio è di: ${scoreNumber}`;
+                    this.classList.add('clicked');
+
+                    if (!freeCells.includes(i)) {
+                        freeCells.push(i);
+                    }
+                    const checkWinner = checkWin(freeCells, cells);
+                    if (checkWinner) {
+                        myScoreDom.innerHTML = "Complimenti, HAI VINTO, con punteggio di: " + freeCells.length;
+                    } else {
+                        myScoreDom.innerHTML = "Il tuo punteggio è: " + freeCells.length;
+                    }
                 }
-                
-            //SE è una bomba do sfondo rosso
-            } else {
-                this.classList.toggle('ms_bomb');
-                score .innerHTML = `Mi dispiace, HAI PERSO, con un punteggio di: ${scoreNumber}`;
-            }
-            console.log(bombs);
-            console.log('hai cliccato sul numero', i);
-            console.log(isNumberBomb(i));
+            }           
         });
-        //inserisco il quadratino creato nella griglia
         gridDom.append(currentCell);
     }
+
 }
+
+//funzione per verificare se ha vinto
+function checkWin(freeCells, cells) {
+    const maxFreeCell = cells - 16;
+    if (freeCells.length == maxFreeCell) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//Funzione per mostrare tutte le bombe quando ne clicco una
+function discoverBombs(bombs) {
+    //creo un array con tutti i numeri della griglia
+    const squaresDom = document.getElementsByClassName('ms_square');
+    //CICLO tutti i numeri e a quelli che sono contenuti nell'array delle bombe li mostro
+    for (let i = 0; i < squaresDom.length; i++) {
+        if (bombs.includes((i + 1))) {
+            squaresDom[i].classList.add('clicked-bomb');
+        }
+    }
+}
+
+//Funzione per generare l'array delle bombe
+function generateBombList(numberOfBombs, cellNumber) {
+    //array contenente la lista delle bombe
+    const bombs = [];
+    //ciclo per generare le bombe
+    for (let i = 0; i < numberOfBombs; i++) {
+        bombs.push(generateRandomUniqueNumber(bombs, 1, cellNumber));
+    }
+    return bombs;
+}
+
+//Funzione per generare un numero casuale UNICO
+function generateRandomUniqueNumber(blacklist, min, max) {
+
+    let valid = false;
+    let randomNumber;
+    //SE non è valido ripeto il ciclo
+    while(!valid) {
+        randomNumber = generateRandomNumber(min, max);
+        //condizione di uscita dal ciclo
+        if (!blacklist.includes(randomNumber)) {
+            valid = true;
+        }
+    }
+    return randomNumber;
+}
+ 
+//Funzione per generare un numero casuale
+function generateRandomNumber(min, max) {
+    const numeroCasuale = Math.floor(Math.random() * (max - min +1)) + min;
+    return numeroCasuale;
+}
+
 
 //funzione per generare il singolo quadrato
 function generateGridItem(cellPerSide, number) {
@@ -102,49 +147,6 @@ function generateGridItem(cellPerSide, number) {
     return cell;
 }
 
-//funzione per generare 16 numeri unici
-function generateBombs(cells) {
-    let numberBlacklist = [];
-    //ciclo per far uscire 16 numeri
-    for (let i = 0; i < 16; i++) {
-        //genero ad ogni giro del ciclo un numero a caso unico
-        const newValidRandomNumber = generateUniqueRandomNumber(numberBlacklist, 1, cells);
-        
-        //aggiungo il numero generato nella lista dei numeri già generati
-        numberBlacklist.push(newValidRandomNumber);
-    }
-
-    return numberBlacklist;
-}
 
 
-//funzione per generare un numero casuale tra min e max
-function generateRandomNumber(min, max) {
-    const number = Math.floor(Math.random() * (max - min + 1)) + min;
-    return number;
-}
 
-//funzione per generare un numero casuale tra min e max che non sia già uscito
-function generateUniqueRandomNumber(blacklist, min, max) {
-    //imposto una variabile booleana a false
-    let isValidNumber = false;
-    let randomNumber;
-    //ciclo di verifica
-    while (!isValidNumber) {
-        randomNumber = generateRandomNumber(min, max);
-        //SE blacklist non include il randomNumber
-        if (!blacklist.includes(randomNumber)) {
-            isValidNumber = true;
-        }
-    }
-    return randomNumber;
-}
-
-//funzione per capire se il numero cliccato è una bomba o no
-function isNumberBomb(i) {
-    if (i == bombs[0] || i == bombs[1] || i == bombs[2] || i == bombs[3] || i == bombs[4] || i == bombs[5] || i == bombs[6] || i == bombs[7] || i == bombs[8] || i == bombs[9] || i == bombs[10] || i == bombs[11] || i == bombs[12] || i == bombs[13] || i == bombs[14] || i == bombs[15]) {
-        return 'bomb';
-    } else {
-        return 'valid';
-    }
-}
